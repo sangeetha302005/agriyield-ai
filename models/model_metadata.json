@@ -1,0 +1,60 @@
+{
+  "best_model_name": "HistGradientBoosting",
+  "split_year": 2011,
+  "train_records": 202487,
+  "test_records": 37726,
+  "feature_columns": [
+    "State_Name",
+    "District_Name",
+    "Season",
+    "Crop",
+    "Crop_Category",
+    "Farm_Scale",
+    "Log_Area",
+    "Year_Index",
+    "Is_Kharif_Monsoon",
+    "Hist_Crop_State_Yield"
+  ],
+  "numerical_columns": [
+    "Log_Area",
+    "Year_Index",
+    "Is_Kharif_Monsoon",
+    "Hist_Crop_State_Yield"
+  ],
+  "categorical_columns": [
+    "State_Name",
+    "Season",
+    "Crop",
+    "Crop_Category",
+    "Farm_Scale"
+  ],
+  "target_column": "Yield",
+  "benchmark_results": {
+    "Baseline (Mean)": {
+      "MAE": 5.6576,
+      "RMSE": 12.5961,
+      "R2": -0.0027,
+      "Train_Time_Sec": 0.0
+    },
+    "Ridge Regression": {
+      "MAE": 1.3765,
+      "RMSE": 4.5257,
+      "R2": 0.8706,
+      "Train_Time_Sec": 0.35
+    },
+    "Random Forest": {
+      "MAE": 1.2434,
+      "RMSE": 4.5536,
+      "R2": 0.869,
+      "Train_Time_Sec": 5.88
+    },
+    "HistGradientBoosting": {
+      "MAE": 1.2562,
+      "RMSE": 4.5183,
+      "R2": 0.871,
+      "Train_Time_Sec": 5.96
+    }
+  },
+  "global_mean_yield": 4.2809,
+  "training_timestamp": "2026-10-25 19:00:19"
+}

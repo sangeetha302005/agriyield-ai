@@ -1,0 +1,35 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Caches and Environments
+.pytest_cache/
+.ipynb_checkpoints/
+.env
+.venv/
+env/
+venv/
+ENV/
+build/
+dist/
+*.egg-info/
+
+# Streamlit local state
+.streamlit/secrets.toml
+
+# Raw datasets (keep large raw downloads out)
+data/raw/*.csv
+data/raw/*.zip
+data/raw/*.parquet
+!data/README.md
+
+# Allow deployment-ready processed data & trained champion model
+!data/processed/crop_production_cleaned.csv
+!models/best_yield_model.joblib
+!models/model_metadata.json
+
+# OS generated files
+.DS_Store
+Thumbs.db
+desktop.ini
