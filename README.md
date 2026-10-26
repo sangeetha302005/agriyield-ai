@@ -1,29 +1,33 @@
 # 🌾 AgriYield AI — Agricultural Crop Yield Prediction and Agribusiness Decision Support System
 
+[![Streamlit Cloud](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://agriyield-ai-302005.streamlit.app/)
 [![Python](https://img.shields.io/badge/Python-3.11%2B-2D5A3F?logo=python&logoColor=white)](https://www.python.org/)
 [![Scikit-Learn](https://img.shields.io/badge/scikit--learn-1.2%2B-F7931E?logo=scikit-learn&logoColor=white)](https://scikit-learn.org/)
-[![Streamlit](https://img.shields.io/badge/Streamlit-1.25%2B-FF4B4B?logo=streamlit&logoColor=white)](https://streamlit.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Tests](https://img.shields.io/badge/PyTest-9%20passed-brightgreen.svg)](tests/)
+[![Tests](https://img.shields.io/badge/PyTest-11%20passed-brightgreen.svg)](tests/)
 [![Data Source](https://img.shields.io/badge/Data%20Source-data.gov.in%20(DES)-1E3A2B)](https://data.gov.in/resource/district-wise-season-wise-crop-production-statistics-1997)
 
-> **AgriYield AI** is an end-to-end, production-grade agricultural analytics and machine learning application engineered on **19 years of authentic Government of India statistics** (246,091 records). It provides automated data auditing, domain-grounded outlier detection, leak-free feature engineering, chronological model evaluation, and an interactive decision-support dashboard for agribusiness and agricultural policy.
+> **🌐 Live Web Application:** [https://agriyield-ai-302005.streamlit.app/](https://agriyield-ai-302005.streamlit.app/)  
+> **📂 GitHub Repository:** [https://github.com/sangeetha302005/agriyield-ai](https://github.com/sangeetha302005/agriyield-ai)
+
+**AgriYield AI** is an end-to-end, production-grade agricultural analytics and machine learning application engineered on **19 years of authentic Government of India statistics** (246,091 records). It provides automated data auditing, domain-grounded outlier detection, leak-free feature engineering, chronological model evaluation ($R^2 = 0.871$), and an interactive decision-support platform with custom CSV/Excel upload visualization capabilities.
 
 ---
 
 ## 📌 Table of Contents
 - [Executive Overview & Value Proposition](#-executive-overview--value-proposition)
+- [Live Application Workflows](#-live-application-workflows)
 - [The Agricultural Problem & Motivation](#-the-agricultural-problem--motivation)
 - [System Architecture](#-system-architecture)
 - [Official Dataset & Provenance](#-official-dataset--provenance)
 - [Data Pipeline & Quality Engineering](#-data-pipeline--quality-engineering)
 - [Feature Engineering & Anti-Leakage Protocol](#-feature-engineering--anti-leakage-protocol)
 - [Machine Learning Benchmarks & Evaluation](#-machine-learning-benchmarks--evaluation)
-- [Streamlit Decision Support Application](#-streamlit-decision-support-application)
 - [Agribusiness & Policy Implications](#-agribusiness--policy-implications)
 - [Repository Structure](#-repository-structure)
-- [Installation & Quick Start](#-installation--quick-start)
+- [Installation & Local Quick Start](#-installation--local-quick-start)
 - [Reproducibility & Testing](#-reproducibility--testing)
+- [Docker Deployment](#-docker-deployment)
 - [Assumptions, Limitations & Responsible Use](#-assumptions-limitations--responsible-use)
 - [Future Roadmap](#-future-roadmap)
 - [Citation & Acknowledgments](#-citation--acknowledgments)
@@ -33,20 +37,57 @@
 ## 🌟 Executive Overview & Value Proposition
 
 In emerging agrarian economies, agricultural yield predictions are commonly treated as trivial cross-validation toy problems using arbitrary synthetic splits. In practice, real-world deployment faces severe obstacles:
-1. **Target Leakage**: Models inadvertently use harvest production or concurrent-year indicators to predict yield ($Y = \frac{P}{A}$), rendering models useless at planting time.
+1. **Target Leakage**: Models inadvertently use post-harvest total production or concurrent-year indicators to predict yield ($Y = \frac{P}{A}$), rendering models useless at planting time.
 2. **Temporal Leakage**: Random K-Fold cross-validation trains on future records (e.g. 2014) to predict past harvests (e.g. 2010), producing inflated metrics that collapse during deployment.
-3. **Unit Heterogeneity**: Reporting anomalies (such as Coconut production recorded in *nuts* while grains are recorded in *metric tonnes*) distort regression loss functions if left unaddressed.
+3. **Unit Heterogeneity**: Reporting anomalies (such as Coconut production recorded in *thousand nuts* while grains are recorded in *metric tonnes*) distort regression loss functions if left unaddressed.
 
 **AgriYield AI** demonstrates how senior machine learning engineering and domain agronomy resolve these issues:
 - **Zero Target Leakage**: Yield is predicted strictly using pre-harvest attributes (`State`, `District`, `Season`, `Crop`, `Crop_Category`, `Farm_Scale`, `Log_Area`, and leak-free expanding historical benchmarks).
 - **Chronological Out-of-Time Validation**: Models are trained on harvests up to **2011 (202,487 records)** and evaluated strictly on unseen future harvest years **2012–2015 (37,726 records)**.
 - **Champion Performance**: A gradient boosted pipeline (`HistGradientBoostingRegressor`) achieves **$R^2 = 0.871$**, reducing Mean Absolute Error to **1.256 Tonnes/Ha** across 124 commodities.
+- **Enterprise Dataset Ingestion**: Upload custom farm CSV/Excel files to automatically profile data health, compute yields, and generate interactive Plotly visual charts instantly.
+
+---
+
+## 🖥️ Live Application Workflows
+
+The live web application ([https://agriyield-ai-302005.streamlit.app/](https://agriyield-ai-302005.streamlit.app/)) is structured into three clean, dedicated workflows:
+
+### 1. 🌾 Home Page
+- **Brand Identity**: Agricultural intelligence platform with modern, responsive styling.
+- **Dynamic KPI Summary Cards**: Real-time record counts (246k+), commodities (124), states (33), and national average yield ($2.73$ t/ha) computed directly from the verified dataset.
+- **Empirical Takeaways**: Key agricultural insights highlighting cereal productivity gaps, monsoon rainfall exposure, and horticulture supply volatility.
+
+### 2. 🏛️ Government Data & Yield AI (Completely Unified)
+- **Sub-Tab 1: 📊 Historical Data Analytics & Trends**
+  - Multi-decade historical yield and acreage trends (1997–2015).
+  - Dynamic slice & dice filters by Crop, State, Season, and Metric Aggregate.
+  - Regional productivity rankings (Top 10 producing states).
+  - Seasonal harvest distributions (Box plots with median, IQR, and variance).
+  - National commodity production rankings across 124 crops.
+- **Sub-Tab 2: 🔮 Pre-Harvest Crop Yield Prediction AI Engine**
+  - Interactive inference form: `State`, `District` (dynamically filtered), `Crop`, `Season`, `Sown Area (Ha)`, and `Target Year`.
+  - Real-time yield forecast (Tonnes/Ha) with **80% Confidence Intervals**.
+  - Expected gross harvest production (Tonnes) with confidence bounds.
+  - Operational Farm Scale classification (Marginal, Small, Medium, Large) and agronomic context.
+  - Champion model validation scorecards ($R^2 = 0.871$, MAE = 1.256 t/ha, RMSE = 4.518 t/ha).
+
+### 3. 📤 Upload & Analyse Your Data (Instant Visual Analytics)
+- **Multi-Format Support**: Ingest `.csv`, `.xlsx`, or `.xls` files directly (or 1-click test with preloaded sample farm data).
+- **Automated Column & Yield Discovery**: Automatically detects numerical/categorical columns and computes $\text{Yield} = \frac{\text{Production}}{\text{Area}}$ if acreage and harvest output are found.
+- **Automated Visual Graphs**:
+  - *Category Performance Bar Chart*: Top categories ranked with formatted value labels and green gradient styling.
+  - *Statistical Distribution Box Plot*: Median, quartiles, and outliers for yield/production.
+  - *Feature Correlation Scatter*: Scatter plot with category color coding (e.g. Area vs. Production).
+  - *Chronological Progression*: Line chart tracking trends over time.
+- **Interactive Custom Chart Explorer**: Build bespoke visualizations choosing Chart Type (*Bar, Line, Scatter, Box, Histogram, Pie/Donut*), X-Axis, Y-Axis, Color Grouping, and Aggregation (*Sum, Mean, Count, Median*).
+- **Data Health & Cleaning Toolbar**: Live profile table, whitespace standardization, deduplication, and export to processed CSV.
 
 ---
 
 ## 🌾 The Agricultural Problem & Motivation
 
-Indian agriculture supports over 140 million operational landholdings and accounts for significant employment and raw industrial inputs. However, production is subjected to high spatial-temporal volatility:
+Indian agriculture supports over 140 million operational landholdings and accounts for significant national employment. However, production is subjected to high spatial-temporal volatility:
 - **Monsoon Exposure**: South-West Monsoon variations introduce extreme yield swings in rainfed Kharif crops.
 - **Regional Productivity Gaps**: Cereal yields in canal-irrigated zones (e.g., Punjab, Haryana at $>4.5$ t/ha) exceed rainfed regions (e.g., Bihar, Odisha at $1.5$–$2.2$ t/ha) by over 200%.
 - **Supply Chain Volatility**: Inaccurate pre-harvest yield forecasts trigger post-harvest price crashes, storage gluts, and food procurement shortages.
@@ -56,8 +97,6 @@ AgriYield AI transforms historical administrative records into actionable pre-ha
 ---
 
 ## 🏗️ System Architecture
-
-The project follows a modular, decoupled architecture maintaining clean boundaries between data ingestion, feature transformation, model training, evaluation, and user presentation:
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -94,11 +133,11 @@ The project follows a modular, decoupled architecture maintaining clean boundari
                                │
                                ▼
 ┌─────────────────────────────────────────────────────────────┐
-│             Interactive Streamlit Dashboard                 │
-│  app.py: Modern Agricultural Intelligence User Interface    │
-│  - Executive Overview        - Pre-Harvest Yield Predictor  │
-│  - Crop Analytics & Trends   - Model Diagnostics & Parity   │
-│  - Data Quality Audit        - Agribusiness Policy Insights │
+│       Interactive Streamlit Cloud Production Dashboard      │
+│  app.py: Modern High-Contrast Agricultural Intelligence     │
+│  - 🌾 Home: Overview & KPI Summary                          │
+│  - 🏛️ Government Data & Yield AI (Trends + ML Predictor)    │
+│  - 📤 Upload & Analyse Your Data (Instant Visual Graphs)    │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -112,7 +151,6 @@ This application uses the authentic, primary candidate dataset published by the 
 - **Publisher**: Ministry of Agriculture and Farmers Welfare, Department of Agriculture and Farmers Welfare, Directorate of Economics and Statistics (DES).
 - **Official Open Data Portal**: [data.gov.in/resource/district-wise-season-wise-crop-production-statistics-1997](https://data.gov.in/resource/district-wise-season-wise-crop-production-statistics-1997)
 - **Catalogue URL**: [delhi.data.gov.in/catalog/district-wise-season-wise-crop-production-statistics-0](https://delhi.data.gov.in/catalog/district-wise-season-wise-crop-production-statistics-0)
-- **Direct Resource Endpoint**: `https://aps.dac.gov.in/APY/apy.csv`
 - **Coverage**: 1997 through 2015 (19 consecutive crop years) across 33 States/UTs, 646 administrative districts, and 124 distinct agricultural crops.
 - **Original Dimensions**: 246,091 rows $\times$ 7 columns.
 - **File Size**: 15,316,741 bytes (~15.3 MB).
@@ -129,7 +167,7 @@ The preprocessing pipeline (`src/data/preprocess.py`) audits the raw records and
    - *Engineering Decision*: Because `Production` is the ground-truth target determinant for `Yield`, imputing production would create synthetic ground truth and distort evaluation. These rows are excluded from supervised model training but retained in data quality audit reports.
 2. **The Coconut Anomaly (Unit Heterogeneity)**:
    - In official Indian agricultural reporting (DES), Coconut is documented in **thousand nuts** or **nuts**, while field crops (Rice, Wheat, Pulses) and commercial crops (Sugarcane) are reported in **Metric Tonnes**.
-   - *Engineering Decision*: Records are tagged with a `Unit_Type` flag (`"Metric Tonnes"` vs `"Thousand Nuts"`). Non-tonne crops are handled distinctly to prevent mixing incompatible dimensions.
+   - *Engineering Decision*: Records are tagged with a `Unit_Type` flag (`"Metric Tonnes"` vs `"Thousand Nuts"`). Non-tonne crops are partitioned to prevent mixing incompatible dimensions.
 3. **Division-by-Zero Prevention**:
    - Sown `Area` has 0 missing values and minimum recorded area is $0.04$ hectares ($> 0$), ensuring mathematical stability for $\text{Yield} = \frac{\text{Production}}{\text{Area}}$.
 4. **Biological Bounds & Outlier Screening**:
@@ -177,14 +215,6 @@ Models were trained on historical records (**1997–2011, 202,487 samples**) and
 | **Random Forest Regressor** | 1.243 | 4.554 | 0.869 | 5.88s | 60 trees, max depth 14 |
 | **HistGradientBoosting** | **1.256** | **4.518** | **0.871** | **5.96s** | 🏆 **Production Champion** |
 
-![Model Benchmark Comparison](assets/screenshots/model_benchmark_comparison.png)
-
-### Key Model Diagnostics & Parity
-- **Parity Analysis**: Predictions track actual harvest yields tightly along the 45-degree diagonal across standard yield ranges.
-- **Minimal Systemic Bias**: Residual mean ($y - \hat{y}$) is **$-0.012$ t/ha**, confirming symmetric error dispersion without systematic under- or over-estimation.
-
-![Parity & Residuals](assets/screenshots/actual_vs_predicted_parity.png)
-
 ### Major Crops Performance Breakdown (Out-of-Time Test Set)
 | Crop | Test Samples | Actual Mean (t/ha) | Pred Mean (t/ha) | MAE (t/ha) | RMSE (t/ha) | $R^2$ Score |
 |:---|:---:|:---:|:---:|:---:|:---:|:---:|
@@ -194,21 +224,6 @@ Models were trained on historical records (**1997–2011, 202,487 samples**) and
 | **Onion** | 1,132 | 12.569 | 12.215 | 2.812 | 4.161 | **0.682** |
 | **Groundnut**| 1,411 | 1.259 | 1.272 | 0.379 | 0.529 | **0.457** |
 | **Sugarcane**| 1,229 | 67.240 | 66.812 | 14.120 | 20.639 | **0.516** |
-
----
-
-## 💻 Streamlit Decision Support Application
-
-The Streamlit web application (`app.py`) is designed with a modern agricultural intelligence aesthetic (**Forest Green `#1E3A2B`**, **Pine Green `#2D5A3F`**, **Muted Sage `#8FBC8F`**, **Harvest Amber `#D4A373`**, and **Crisp Off-White `#F8FAF7`**):
-
-1. **🌾 Home (Landing Page)**: Hero banner (*“Smarter Farming Starts with Better Data”*), prominent *Get Started* button, dynamic KPI summary cards (Total records, crops, states, average yield calculated from loaded data), and feature highlights.
-2. **📊 Crop Analytics**: Interactive filters for 124 crops and 33 regions, historical yield and production time-series charts, top-producing states, and seasonal boxplots.
-3. **📤 Upload & Analyse Data**: File uploader for custom CSV and Excel files, live data preview, missing/duplicate audits, automated yield calculation, and dataset switcher to analyze uploaded data across the entire platform.
-4. **🔮 Yield Prediction**: Form accepting strictly valid pre-harvest parameters (`State`, `District`, `Season`, `Crop`, `Area`, `Year`), displaying forecasted yield (t/ha), gross production (tonnes), 80% confidence intervals, and regional advisory context.
-5. **📈 Model Performance**: Interactive leaderboard comparing baseline, linear, tree ensemble, and gradient boosting models, parity plots, residual histograms, and out-of-time validation methodology.
-6. **🛡️ Data Quality**: Transparent visual audit of nulls, duplicates, unit anomalies, and ICAR biological bound retention.
-
-![Historical Trends](assets/screenshots/crop_yield_trends.png)
 
 ---
 
@@ -225,68 +240,58 @@ The Streamlit web application (`app.py`) is designed with a modern agricultural 
 
 ```
 agriyield-ai/
-├── README.md                      # Recruiter-friendly technical documentation
-├── app.py                         # Multipage Streamlit decision support application
-├── requirements.txt               # Pinned production dependencies
-├── .gitignore                     # Data, cache, and artifact exclusions
-├── .env.example                   # Environment variable template
-├── LICENSE                        # Open-source MIT License
+├── README.md                      # Comprehensive project documentation
+├── app.py                         # Production Streamlit decision support web application
+├── Dockerfile                     # Production containerization configuration
+├── .dockerignore                  # Docker build exclusions
+├── requirements.txt               # Pinned production dependencies (with openpyxl)
+├── .gitignore                     # Deployment and cache exclusions
+├── .streamlit/
+│   └── config.toml                # Light theme & high contrast UI overrides
 ├── data/
 │   ├── README.md                  # Comprehensive dataset provenance & schema guide
-│   ├── raw/
-│   │   └── crop_production_raw.csv # Official Government of India dataset (15.3 MB)
+│   ├── raw/                       # Raw downloads directory
 │   └── processed/
 │       └── crop_production_cleaned.csv # Audited, unit-standardized dataset (242k rows)
 ├── notebooks/
 │   ├── 01_data_exploration.ipynb  # Rigorous exploratory data analysis & quality audit
 │   └── 02_model_experiments.ipynb # Chronological validation & model experiments
 ├── src/
-│   ├── __init__.py
 │   ├── data/
-│   │   ├── __init__.py
 │   │   ├── load_data.py           # Ingestion, schema validation, resilient download
 │   │   └── preprocess.py          # Data cleaning, unit tagging, outlier auditing
 │   ├── features/
-│   │   ├── __init__.py
 │   │   └── build_features.py      # Agronomic taxonomy, log-transforms, benchmarks
 │   ├── models/
-│   │   ├── __init__.py
 │   │   ├── train.py               # Model training, comparisons, and serialization
 │   │   ├── evaluate.py            # Residual diagnostics, breakdown reports
 │   │   └── predict.py             # Inference engine with confidence intervals
 │   └── visualization/
-│       ├── __init__.py
 │       └── charts.py              # Themed Plotly interactive visualizations
 ├── tests/
 │   ├── test_preprocessing.py      # Schema, null, and unit validation tests
-│   └── test_features.py           # Feature engineering, bounds, and inference tests
+│   ├── test_features.py           # Feature engineering, bounds, and inference tests
+│   └── test_upload_logic.py       # Custom CSV/Excel parsing and yield tests
 ├── reports/
 │   ├── data_quality_summary.md    # Comprehensive data audit report
 │   └── model_evaluation.md       # Model performance and breakdown analysis
 ├── docs/
-│   ├── architecture.md            # System architecture and Mermaid diagrams
+│   ├── architecture.md            # System architecture and diagrams
 │   ├── methodology.md             # Prediction formulation and validation strategy
 │   ├── data_dictionary.md         # Full schema and feature descriptions
 │   └── limitations.md             # Assumptions, data limitations, responsible use
-├── models/
-│   ├── best_yield_model.joblib    # Serialized champion pipeline
-│   └── model_metadata.json        # Training metadata and benchmark metrics
-└── assets/
-    └── screenshots/               # Generated high-resolution diagnostic charts
+└── models/
+    ├── best_yield_model.joblib    # Serialized champion pipeline (620 KB)
+    └── model_metadata.json        # Training metadata and benchmark metrics
 ```
 
 ---
 
-## 🚀 Installation & Quick Start
+## 🚀 Installation & Local Quick Start
 
-### 1. Prerequisites
-- Python 3.10 or 3.11
-- Git
-
-### 2. Clone Repository & Set Up Virtual Environment
+### 1. Clone Repository & Set Up Virtual Environment
 ```bash
-# Clone the repository
-git clone https://github.com/your-username/agriyield-ai.git
+git clone https://github.com/sangeetha302005/agriyield-ai.git
 cd agriyield-ai
 
 # Create and activate virtual environment
@@ -300,19 +305,7 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 3. Verify Data Pipeline & Run Machine Learning Workflow
-```bash
-# Preprocess and audit raw data
-python -m src.data.preprocess
-
-# Train and benchmark all candidate models
-python -m src.models.train
-
-# Generate out-of-time evaluation report
-python -m src.models.evaluate
-```
-
-### 4. Launch the Interactive Dashboard
+### 2. Launch Local Streamlit Application
 ```bash
 streamlit run app.py
 ```
@@ -322,26 +315,43 @@ streamlit run app.py
 
 ## 🧪 Reproducibility & Testing
 
-The test suite validates data ingestion, schema enforcement, category mapping, operational scale tiers, anti-leakage benchmarks, and model inference constraints:
+The test suite validates data ingestion, schema enforcement, category mapping, operational scale tiers, anti-leakage benchmarks, custom CSV/Excel uploads, and model inference constraints:
 
 ```bash
 python -m pytest -v
 ```
 
-**Test Results:**
+**Test Results (100% Pass):**
 ```
-tests/test_features.py::test_crop_category_mapping PASSED           [ 11%]
-tests/test_features.py::test_farm_scale_classification PASSED       [ 22%]
-tests/test_features.py::test_feature_engineering_pipeline PASSED    [ 33%]
-tests/test_features.py::test_input_validation PASSED                [ 44%]
-tests/test_features.py::test_prediction_output_structure PASSED     [ 55%]
-tests/test_preprocessing.py::test_validate_raw_schema_valid PASSED  [ 66%]
-tests/test_preprocessing.py::test_validate_raw_schema_missing PASSED[ 77%]
-tests/test_preprocessing.py::test_clean_text_columns PASSED         [ 88%]
-tests/test_preprocessing.py::test_audit_and_clean_data_pipeline PASSED [100%]
+tests/test_features.py::test_crop_category_mapping PASSED                [  9%]
+tests/test_features.py::test_farm_scale_classification PASSED            [ 18%]
+tests/test_features.py::test_feature_engineering_pipeline PASSED         [ 27%]
+tests/test_features.py::test_input_validation PASSED                     [ 36%]
+tests/test_features.py::test_prediction_output_structure PASSED          [ 45%]
+tests/test_preprocessing.py::test_validate_raw_schema_valid PASSED       [ 54%]
+tests/test_preprocessing.py::test_validate_raw_schema_missing PASSED     [ 63%]
+tests/test_preprocessing.py::test_clean_text_columns PASSED              [ 72%]
+tests/test_preprocessing.py::test_audit_and_clean_data_pipeline PASSED   [ 81%]
+tests/test_upload_logic.py::test_custom_csv_upload_and_yield_calculation PASSED [ 90%]
+tests/test_upload_logic.py::test_custom_upload_missing_and_duplicates PASSED [100%]
 
-======================= 9 passed in 3.26s =======================
+======================= 11 passed in 2.53s =======================
 ```
+
+---
+
+## 🐳 Docker Deployment
+
+To build and run the application via Docker:
+
+```bash
+# Build the container
+docker build -t agriyield-ai .
+
+# Run the container
+docker run -p 8501:8501 agriyield-ai
+```
+Access the containerized app at `http://localhost:8501`.
 
 ---
 
@@ -352,14 +362,6 @@ tests/test_preprocessing.py::test_audit_and_clean_data_pipeline PASSED [100%]
 3. **Responsible Lending**: Predictive scores should be utilized as risk-screening and advisory benchmarks, never as sole automated grounds for denying credit to smallholder farmers.
 
 See [docs/limitations.md](docs/limitations.md) for full governance details.
-
----
-
-## 🔮 Future Roadmap
-
-- [ ] **Satellite NDVI Feeds**: Ingest Sentinel-2 and MODIS vegetation indices for real-time vegetative growth monitoring.
-- [ ] **High-Resolution Weather Integration**: Ingest gridded IMD / ERA5 daily precipitation, maximum/minimum temperature, and vapor pressure deficit (VPD).
-- [ ] **Multilingual Vernacular Advisories**: Automated SMS / WhatsApp advisories for farmers in Hindi, Punjabi, Bengali, Tamil, Telugu, and Marathi.
 
 ---
 
